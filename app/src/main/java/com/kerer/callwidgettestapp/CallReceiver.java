@@ -57,8 +57,12 @@ public class CallReceiver extends BroadcastReceiver {
     }
     protected void onOutgoingCallStarted(Context ctx){
         Log.d(TAG, "onOutgoingCallStarted");
+
+        ctx.startService(WidgetService.getIntent(ctx, false, "Ivan"));
     }
     protected void onCallEnded(Context ctx){
         Log.d(TAG, "onCallEnded");
+        ctx.startService(WidgetService.getIntent(ctx, true, null));
+
     }
 }
