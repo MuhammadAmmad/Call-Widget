@@ -5,11 +5,12 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.PixelFormat;
 import android.os.IBinder;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.WindowManager;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.TextView;
 
 /**
@@ -17,12 +18,18 @@ import android.widget.TextView;
  */
 
 public class WidgetService extends Service {
-    private WindowManager mWindowManager;
-    private View mFloatingView;
+
     private static final String EXTRA_IS_CALL_FINISH = "isCallFinish";
     private static final String EXTRA_NAME_CALLER = "name";
 
-    public static final Intent getIntent(Context context, boolean isCallFinish, String callerName){
+    private WindowManager mWindowManager;
+    private View mFloatingView;
+    private TextView mShowCallTv;
+    private TextView mCallDetailTv;
+
+    private  Animation mShowHideAnimation
+            ;
+    public static final Intent getIntent(Context context, boolean isCallFinish, String callerName) {
         Intent intent = new Intent(context, WidgetService.class);
         intent.putExtra(EXTRA_IS_CALL_FINISH, isCallFinish);
         intent.putExtra(EXTRA_NAME_CALLER, callerName);
@@ -49,16 +56,17 @@ public class WidgetService extends Service {
 
         boolean isCallended = intent.getBooleanExtra(EXTRA_IS_CALL_FINISH, true);
 
-        if (isCallended){
+        if (isCallended) {
+            if (mFloatingView != null) mWindowManager.removeView(mFloatingView);
             stopSelf();
-        }else {
+        } else {
             String callerName = intent.getStringExtra(EXTRA_NAME_CALLER);
             drowWidget(callerName);
         }
         return super.onStartCommand(intent, flags, startId);
     }
 
-    private void drowWidget(String callerName){
+    private void drowWidget(String callerName) {
         //Inflate the floating view layout we created
         mFloatingView = LayoutInflater.from(this).inflate(R.layout.call_widget, null);
 
@@ -79,19 +87,27 @@ public class WidgetService extends Service {
         mWindowManager = (WindowManager) getSystemService(WINDOW_SERVICE);
         mWindowManager.addView(mFloatingView, params);
 
-        final TextView mTExtView = (TextView) mFloatingView.findViewById(R.id.testTv);
-        mTExtView.setText(callerName);
-        mTExtView.setOnClickListener(new View.OnClickListener() {
+        mCallDetailTv = (TextView) mFloatingView.findViewById(R.id.testTv2);
+        mShowCallTv = (TextView) mFloatingView.findViewById(R.id.testTv);
+
+        mCallDetailTv.setText(getString(R.string.call_detail_description, callerName));
+
+        mShowCallTv.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.d("ASFASFASASF", "ASFASFASFAS");
+                showHideCallDetail();
             }
         });
     }
 
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        if (mFloatingView != null) mWindowManager.removeView(mFloatingView);
+    private void showHideCallDetail() {
+        if (mCallDetailTv.getVisibility() == View.VISIBLE) {
+            mShowHideAnimation = AnimationUtils.loadAnimation(getBaseContext(), R.anim.hide_call_detail_anim);
+            mCallDetailTv.setVisibility(View.GONE);
+        } else {
+            mShowHideAnimation = AnimationUtils.loadAnimation(getBaseContext(), R.anim.show_call_detail_anim);
+            mCallDetailTv.setVisibility(View.VISIBLE);
+        }
+        mCallDetailTv.startAnimation(mShowHideAnimation);
     }
 }
