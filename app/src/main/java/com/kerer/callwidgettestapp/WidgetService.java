@@ -27,8 +27,7 @@ public class WidgetService extends Service {
     private TextView mShowCallTv;
     private TextView mCallDetailTv;
 
-    private  Animation mShowHideAnimation
-            ;
+    private  Animation mShowHideAnimation;
     public static final Intent getIntent(Context context, boolean isCallFinish, String callerName) {
         Intent intent = new Intent(context, WidgetService.class);
         intent.putExtra(EXTRA_IS_CALL_FINISH, isCallFinish);
@@ -57,8 +56,10 @@ public class WidgetService extends Service {
         boolean isCallended = intent.getBooleanExtra(EXTRA_IS_CALL_FINISH, true);
 
         if (isCallended) {
-            if (mFloatingView != null) mWindowManager.removeView(mFloatingView);
-            stopSelf();
+            if (mFloatingView != null) {
+                mWindowManager.removeView(mFloatingView);
+            }
+            stopService(new Intent(this, WidgetService.class));
         } else {
             String callerName = intent.getStringExtra(EXTRA_NAME_CALLER);
             drowWidget(callerName);
@@ -76,7 +77,9 @@ public class WidgetService extends Service {
                 WindowManager.LayoutParams.WRAP_CONTENT,
                 WindowManager.LayoutParams.TYPE_PHONE,
                 WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE,
-                PixelFormat.TRANSLUCENT);
+                PixelFormat.TRANSLUCENT
+
+        );
 
         //Specify the view position
         params.gravity = Gravity.TOP | Gravity.RIGHT;        //Initially view will be added to top-left corner
@@ -86,6 +89,7 @@ public class WidgetService extends Service {
         //Add the view to the window
         mWindowManager = (WindowManager) getSystemService(WINDOW_SERVICE);
         mWindowManager.addView(mFloatingView, params);
+
 
         mCallDetailTv = (TextView) mFloatingView.findViewById(R.id.testTv2);
         mShowCallTv = (TextView) mFloatingView.findViewById(R.id.testTv);
@@ -109,5 +113,10 @@ public class WidgetService extends Service {
             mCallDetailTv.setVisibility(View.VISIBLE);
         }
         mCallDetailTv.startAnimation(mShowHideAnimation);
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
     }
 }
