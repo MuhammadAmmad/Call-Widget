@@ -27,7 +27,8 @@ public class WidgetService extends Service {
     private TextView mShowCallTv;
     private TextView mCallDetailTv;
 
-    private  Animation mShowHideAnimation;
+    private Animation mShowHideAnimation;
+
     public static final Intent getIntent(Context context, boolean isCallFinish, String callerName) {
         Intent intent = new Intent(context, WidgetService.class);
         intent.putExtra(EXTRA_IS_CALL_FINISH, isCallFinish);
@@ -96,7 +97,7 @@ public class WidgetService extends Service {
 
         mCallDetailTv.setText(getString(R.string.call_detail_description, callerName));
 
-        mShowCallTv.setOnClickListener(new View.OnClickListener() {
+        mFloatingView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 showHideCallDetail();
@@ -112,7 +113,8 @@ public class WidgetService extends Service {
             mShowHideAnimation = AnimationUtils.loadAnimation(getBaseContext(), R.anim.show_call_detail_anim);
             mCallDetailTv.setVisibility(View.VISIBLE);
         }
-        mCallDetailTv.startAnimation(mShowHideAnimation);
+        mFloatingView.startAnimation(mShowHideAnimation);
+
     }
 
     @Override
