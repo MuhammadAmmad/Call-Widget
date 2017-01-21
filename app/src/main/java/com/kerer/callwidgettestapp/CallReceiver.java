@@ -52,6 +52,9 @@ public class CallReceiver extends BroadcastReceiver {
     }
 
     private void onCallStateChanged(Context context, int state, String name) {
+        if (name == null){
+            name = context.getString(R.string.unknown);
+        }
         switch (state) {
             case TelephonyManager.CALL_STATE_RINGING:
                 if (lastState != TelephonyManager.CALL_STATE_RINGING) {

@@ -3,4 +3,6 @@
     <string name="call_detail_description">Размер ботинков у звонящего 23 \n %1$s</string>
     <string name="show">SHOW</string>
     <string name="no_permissions">У приложения Call Widget нету всех разрешений</string>
+    <string name="unknown">Unknown</string>
+    <string name="hide">HIDE</string>
 </resources>

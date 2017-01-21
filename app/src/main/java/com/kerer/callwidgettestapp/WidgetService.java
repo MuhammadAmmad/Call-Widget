@@ -109,9 +109,11 @@ public class WidgetService extends Service {
         if (mCallDetailTv.getVisibility() == View.VISIBLE) {
             mShowHideAnimation = AnimationUtils.loadAnimation(getBaseContext(), R.anim.hide_call_detail_anim);
             mCallDetailTv.setVisibility(View.GONE);
+            mShowCallTv.setText(getString(R.string.show));
         } else {
             mShowHideAnimation = AnimationUtils.loadAnimation(getBaseContext(), R.anim.show_call_detail_anim);
             mCallDetailTv.setVisibility(View.VISIBLE);
+            mShowCallTv.setText(R.string.hide);
         }
         mFloatingView.startAnimation(mShowHideAnimation);
 
